@@ -1,7 +1,6 @@
 library(data.table)
 library(stringr)
 library(tidyverse)
-library(highcharter)
 
 dt <- fread('/Users/deano/Documents/R/flexidash/spain_exp_player_stats/exp_player_stats_spain.csv')
 
@@ -26,35 +25,29 @@ dt$xA <- as.numeric(dt$xA)
 
 # add G90
 dt$G90 <- (dt$G / dt$Min) * 90
-
-# add diff.GxG
-dt$diff.GxG <- dt$G - dt$xG
-
-hchart(dt$diff.GxG, type = "column")
-
+dt
 
 barca <- dt[team=='Barcelona',]
-
-
-
-# hchart(barca$diff.GxG, colorByPoint = TRUE, name = barca$PLayer)
-
-# barca %>%
-  # hchart(type = "column", hcaes(x = Player, value = diff.GxG)) 
-
 
 barca$G.percent <- barca[, .(G.percent = G / sum(G))]
 barca
 
-
+dt$diff.GxG <- dt$G - dt$xG
 dt
 
-### graph
-barca %>%
-  hchart(type = "treemap", hcaes(x = Player, value = G, color = G)) 
+hchart(type = "treemap", hcaes(x = dt$Player, value = dt$G, color = n))
+str(barca)
 
+barca%>%
+  count(Player)%>%
+  arrange(n)
 
+dt%>%
+  count(G)%>%
+  arrange(n)%>%
+  hchart(type = "treemap", hcaes(x = G, value = n, color = n))
 
+library(highcharter)
 # install.packages('highcharter', dependencies = TRUE)
 glimpse(pokemon)
 
